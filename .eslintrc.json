@@ -1,3 +1,312 @@
 {
-  "extends": "next/core-web-vitals"
+  // Configuration for JS/TS files
+  "extends": [
+    "airbnb-base",
+    "next/core-web-vitals", // Needed to avoid warning in next.js build: 'The Next.js plugin was not detected in your ESLint configuration'
+    "plugin:prettier/recommended",
+    "plugin:@tanstack/eslint-plugin-query/recommended"
+  ],
+  "rules": {
+    "prettier/prettier": [
+      "error",
+      {
+        "singleQuote": true,
+        "endOfLine": "auto"
+      }
+    ] // Avoid conflict rule between Prettier and Airbnb Eslint
+  },
+  "overrides": [
+    // Configuration for TypeScript files
+    {
+      "files": [
+        "**/*.ts",
+        "**/*.tsx",
+        "**/*.mts"
+      ],
+      "plugins": [
+        "@typescript-eslint",
+        "unused-imports",
+        "tailwindcss",
+        "simple-import-sort",
+        "react",
+        "react-hooks",
+        "jsx-a11y",
+        "import",
+        "promise",
+        "jsdoc",
+        "prettier"
+      ],
+      "extends": [
+        "plugin:tailwindcss/recommended",
+        "airbnb",
+        "airbnb-typescript",
+        "next/core-web-vitals",
+        "plugin:prettier/recommended",
+        "plugin:@typescript-eslint/recommended",
+        "plugin:react/recommended",
+        "plugin:react-hooks/recommended",
+        "plugin:import/errors",
+        "plugin:import/recommended",
+        "plugin:react/jsx-runtime",
+        "plugin:jsx-a11y/recommended",
+        "plugin:import/typescript"
+      ],
+      "parser": "@typescript-eslint/parser",
+      "parserOptions": {
+        "project": "./tsconfig.json"
+      },
+      "rules": {
+        "allowImplicit": 0,
+        "no-console": [
+          "error",
+          {
+            "allow": [
+              "warn",
+              "error"
+            ]
+          }
+        ],
+        "semi": [
+          "error",
+          "never"
+        ],
+        "template-curly-spacing": "off",
+        "react/jsx-filename-extension": [
+          1,
+          {
+            "extensions": [
+              ".js",
+              ".jsx",
+              ".ts",
+              ".tsx"
+            ]
+          }
+        ],
+        "arrow-parens": 0,
+        "react/prop-types": 0,
+        "max-len": [
+          "error",
+          {
+            "code": 350
+          }
+        ],
+        "linebreak-style": [
+          "error",
+          "unix"
+        ],
+        "react-hooks/exhaustive-deps": "warn",
+        "react/jsx-uses-react": "off",
+        "react/react-in-jsx-scope": "off",
+        "object-curly-newline": [
+          "error",
+          {
+            "ImportDeclaration": {
+              "consistent": true
+            },
+            "ExportDeclaration": {
+              "consistent": true
+            },
+            "ObjectPattern": {
+              "consistent": true
+            },
+            "ObjectExpression": {
+              "consistent": true
+            }
+          }
+        ],
+        "array-callback-return": "off",
+        "consistent-return": "off",
+        "newline-per-chained-call": [
+          "error",
+          {
+            "ignoreChainWithDepth": 4
+          }
+        ],
+        "import/no-extraneous-dependencies": "error",
+        "import/no-duplicates": "error",
+        "import/no-self-import": "error",
+        "import/no-relative-packages": "error",
+        "import/consistent-type-specifier-style": [
+          "error",
+          "prefer-inline"
+        ],
+        "@typescript-eslint/consistent-type-imports": "error",
+        "import/no-empty-named-blocks": "error",
+        "import/no-import-module-exports": "error",
+        "import/newline-after-import": "error",
+        "import/no-useless-path-segments": [
+          "error",
+          {
+            "noUselessIndex": true
+          }
+        ],
+        "@typescript-eslint/no-non-null-assertion": "error",
+        "@typescript-eslint/no-unused-vars": ["error", { "argsIgnorePattern": "^_" }],
+        "@typescript-eslint/indent": "off",
+        "@typescript-eslint/semi": "off",
+        "@typescript-eslint/no-use-before-define": [
+          "error",
+          {
+            "functions": false,
+            "classes": false
+          }
+        ],
+        "react/no-unknown-property": [
+          "error",
+          {
+            "ignore": [
+              "css"
+            ]
+          }
+        ],
+        "no-param-reassign": [
+          "error",
+          {
+            "props": true,
+            "ignorePropertyModificationsForRegex": [
+              "(d|D)raft",
+              "this",
+              "$"
+            ]
+          }
+        ],
+        "jsdoc/check-access": 1,
+        "jsdoc/check-alignment": 1,
+        "jsdoc/check-param-names": 1,
+        "jsdoc/check-property-names": 1,
+        "jsdoc/check-tag-names": 1,
+        "jsdoc/check-types": 1,
+        "jsdoc/check-values": 1,
+        "jsdoc/empty-tags": 1,
+        "jsdoc/implements-on-classes": 1,
+        "jsdoc/multiline-blocks": 1,
+        "jsdoc/no-multi-asterisks": 1,
+        "jsdoc/no-undefined-types": 1,
+        "jsdoc/require-jsdoc": 1,
+        "jsdoc/require-param": 1,
+        "jsdoc/require-param-description": 1,
+        "jsdoc/require-param-name": 1,
+        "jsdoc/require-param-type": 1,
+        "jsdoc/require-property": 1,
+        "jsdoc/require-property-description": 1,
+        "jsdoc/require-property-name": 1,
+        "jsdoc/require-property-type": 1,
+        "jsdoc/require-returns-check": 1,
+        "jsdoc/require-returns-type": 1,
+        "jsdoc/require-yields": 1,
+        "jsdoc/require-yields-check": 1,
+        "jsdoc/tag-lines": 1,
+        "jsdoc/valid-types": 1,
+        "prettier/prettier": [
+          "error",
+          {
+            "plugins": [
+              "@trivago/prettier-plugin-sort-imports"
+            ],
+            "singleQuote": true,
+            "endOfLine": "lf",
+            "semi": false,
+            "bracketSpacing": true,
+            "printWidth": 105,
+            "useTabs": false,
+            "tabWidth": 2,
+            "quoteProps": "as-needed",
+            "jsxSingleQuote": false,
+            "bracketSameLine": false,
+            "trailingComma": "none",
+            "arrowParens": "avoid",
+            "importOrder": [
+              "^(^react$|@react|react)",
+              "<THIRD_PARTY_MODULES>",
+              "^@/(.*)$",
+              "^[./]"
+            ],
+            "importOrderSeparation": true,
+            "importOrderSortSpecifiers": true
+          }
+        ], // Avoid conflict rule between Prettier and Airbnb Eslint
+        "import/extensions": "off", // Avoid missing file extension errors, TypeScript already provides a similar feature
+        "react/function-component-definition": "off", // Disable Airbnb's specific function type
+        "react/destructuring-assignment": "off", // Vscode doesn't support automatically destructuring, it's a pain to add a new variable
+        "react/require-default-props": "off", // Allow non-defined react props as undefined
+        "react/jsx-props-no-spreading": "off", // _app.tsx uses spread operator and also, react-hook-form
+        "@typescript-eslint/comma-dangle": "off", // Avoid conflict rule between Eslint and Prettier
+        "no-restricted-syntax": [
+          "error",
+          "ForInStatement",
+          "LabeledStatement",
+          "WithStatement"
+        ], // Overrides Airbnb configuration and enable no-restricted-syntax
+        "import/prefer-default-export": "off", // Named export is easier to refactor automatically
+        "simple-import-sort/exports": "error", // Export configuration for `eslint-plugin-simple-import-sort`
+        "import/order": "off", // Avoid conflict rule between `eslint-plugin-import` and `eslint-plugin-simple-import-sort`
+        "unused-imports/no-unused-imports": "error",
+        "unused-imports/no-unused-vars": [
+          "error",
+          {
+            "argsIgnorePattern": "^_"
+          }
+        ]
+      }
+    },
+    {
+      "files": [
+        "**/*.tsx"
+      ],
+      "rules": {
+        "jsdoc/require-jsdoc": "off",
+        "jsdoc/require-param-type": "off",
+        "jsdoc/require-param-description": "off"
+      }
+    },
+    // Configuration for testing
+    {
+      "files": [
+        "**/*.test.ts",
+        "**/*.test.tsx"
+      ],
+      "plugins": [
+        "vitest",
+        "jest-formatting",
+        "testing-library",
+        "jest-dom"
+      ],
+      "extends": [
+        "plugin:vitest/recommended",
+        "plugin:jest-formatting/recommended",
+        "plugin:testing-library/react",
+        "plugin:jest-dom/recommended"
+      ]
+    },
+    // Configuration for e2e testing (Playwright)
+    {
+      "files": [
+        "**/*.spec.ts"
+      ],
+      "extends": [
+        "plugin:playwright/recommended"
+      ]
+    },
+    // Configuration for Storybook
+    {
+      "files": [
+        "*.stories.*"
+      ],
+      "extends": [
+        "plugin:storybook/recommended"
+      ],
+      "rules": {
+        "import/no-extraneous-dependencies": [
+          "error",
+          {
+            "devDependencies": true
+          }
+        ]
+      }
+    }
+  ],
+
+  "ignorePatterns": [
+    "cypress"
+  ]
 }
