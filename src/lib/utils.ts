@@ -8,3 +8,17 @@ import { twMerge } from 'tailwind-merge'
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
+
+/**
+ *
+ * @param sqlDate
+ */
+export function dateToLocal(sqlDate: string) {
+  return new Date(sqlDate).toLocaleTimeString('en-US', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: 'numeric'
+  })
+}
