@@ -5,6 +5,10 @@ import { cookies } from 'next/headers'
 const secretKey = process.env.JWT_SECRET_KEY
 const key = new TextEncoder().encode(secretKey)
 
+type Token = {
+  email: string
+  id: number
+}
 /**
  * Encrypts the given payload into a JWT token.
  * @param {object} payload - The data to be encrypted into the token.
@@ -23,8 +27,8 @@ export async function encrypt(payload: Record<string, any>): Promise<string> {
  * @param {string} token - The JWT token to decrypt.
  * @returns {Promise<object>} A promise that resolves to the decrypted payload.
  */
-export async function decrypt(token: string): Promise<Record<string, any>> {
-  const { payload } = await jwtVerify(token, key, {
+export async function decrypt(token: string): Promise<Token> {
+  const { payload } = await jwtVerify<Token>(token, key, {
     algorithms: ['HS256']
   })
   return payload
@@ -53,7 +57,7 @@ export async function login(email: string, password: string): Promise<boolean> {
   // Here you would typically check the email and password against your database
   // For this example, we'll just check if the email includes '@' and the password is longer than 3 characters
   if (email.includes('@') && password.length > 3) {
-    const token = await encrypt({ email })
+    const token = await encrypt({ email, id: 1 })
     cookies().set('token', token, { httpOnly: true })
     return true
   }
@@ -72,7 +76,7 @@ export async function logout(): Promise<void> {
  * Retrieves the current session information from the token cookie.
  * @returns {Promise<object | null>} A promise that resolves to the session payload if a valid token exists, null otherwise.
  */
-export async function getSession(): Promise<Record<string, any> | null> {
+export async function getSession(): Promise<Token | null> {
   const token = cookies().get('token')?.value
   if (token) {
     try {
