@@ -1,7 +1,7 @@
 'use server'
 
 import db from '../lib/db/connection'
-import users from '../lib/db/schema/users'
+import users from '../lib/db/schema/Users'
 
 /**
  *
@@ -23,7 +23,7 @@ export async function fetchUsers() {
  */
 export async function createUser(name: string, email: string, password: string) {
   try {
-    await db.insert(users).values({ name, email, password }).run()
+    db.insert(users).values({ name, email, password }).run()
   } catch (err) {
     if (err instanceof Error) console.error(err.stack)
   }
