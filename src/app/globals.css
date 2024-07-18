@@ -71,12 +71,15 @@
   }
 
   .content-transform-transition {
+    height: 100%;
+    overflow: auto;
     transition: border-radius .3s, transform 0.3s ease-in;
   }
   .content-aside {
     border-radius: 12px;
     overflow: hidden;
     height: 90%;
+    overflow: hidden;
     transform: perspective(23px) rotateY(-1deg) translateX(180px);
     transition: border-radius .3s,transform 0.4s cubic-bezier(0.64,0.58,0.3,1.16);
   }
