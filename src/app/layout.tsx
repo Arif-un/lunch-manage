@@ -1,3 +1,4 @@
+import { Provider } from 'jotai'
 import { type Metadata } from 'next'
 import { Inter } from 'next/font/google'
 
@@ -17,9 +18,11 @@ export const metadata: Metadata = {
 }
 
 export default function RootLayout({
-  children
+  children,
+  modal
 }: Readonly<{
   children: React.ReactNode
+  modal: React.ReactNode
 }>) {
   return (
     <html lang="en">
@@ -29,9 +32,11 @@ export default function RootLayout({
           fontSans.variable
         )}
       >
-        <Sidebar />
-
-        {children}
+        <Provider>
+          <Sidebar />
+          {modal}
+          {children}
+        </Provider>
       </body>
     </html>
   )
