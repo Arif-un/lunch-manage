@@ -1,9 +1,11 @@
+import Link from 'next/link'
+
 import { Button } from '@/src/components/ui/button'
 
 import ContentWrapper from '../components/content-wrapper'
 import NavButton from '../components/nav-button'
 import TotalBar from '../components/total-bar'
-import { fetchUsers } from '../server/usereActions'
+import { fetchUsers } from '../server/usersActions'
 
 export default async function Home() {
   const users = await fetchUsers()
@@ -16,6 +18,7 @@ export default async function Home() {
         <div className="w-11/12 md:w-4/6 ">
           <div className="my-2 flex justify-between">
             <NavButton />
+            <Link href="/payments/create">careate</Link>
             <div className="flex items-center gap-2">
               <span className="text-slate-400">Date:</span>
               <input aria-label="Date" type="date" value={todayFormattedDate} />
