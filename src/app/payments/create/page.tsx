@@ -68,6 +68,7 @@ export default async function CreatePaymentModal({
       .insert(Payments)
       .values(validation.data)
       .returning({ insertedId: Payments.id })
+
     db.insert(paymentsLog)
       .values({
         ...validation.data,
