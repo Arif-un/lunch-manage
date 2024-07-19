@@ -22,3 +22,14 @@ export function dateToLocal(sqlDate: string) {
     minute: 'numeric'
   })
 }
+
+export function dateToday() {
+  const today = new Date()
+  const todayFormattedDate = today.toISOString().split('T')[0]
+  return todayFormattedDate
+}
+
+export const fetcher = (url: string) => fetch(url).then(res => res.json())
+
+export const mutator = (url: string, { arg }: { arg: any }) =>
+  fetch(url, { method: 'POST', body: JSON.stringify(arg) }).then(res => res.json())
