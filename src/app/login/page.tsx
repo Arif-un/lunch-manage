@@ -27,7 +27,7 @@ export default function LoginPage() {
     formData.append('email', email)
     formData.append('password', password)
 
-    const { success } = await loginAction(formData)
+    const { success } = (await loginAction(formData)) || {}
     if (success) {
       router.push('/')
     } else {
