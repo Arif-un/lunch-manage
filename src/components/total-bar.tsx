@@ -1,13 +1,17 @@
-export default function TotalBar() {
+import PriceSetter from './price-setter'
+
+export default function TotalBar({ price, quantity }: { price: number; quantity: number }) {
+  const totalFormatted = (price * quantity).toFixed(0)
   return (
-    <div className="fixed bottom-0 m-1 flex w-11/12 items-center justify-between rounded-md border p-3 md:w-4/6">
+    <div className="flex  items-center justify-between rounded-md border p-2 md:w-4/6">
       <span className="text-slate-400">Total</span>
 
-      <div className="flex items-center gap-1">
-        <span>10</span>
+      <div className="flex items-center gap-1 text-sm font-normal">
+        <span>{quantity}</span>
         <span>X</span>
-        <span className="rounded bg-slate-100 p-0.5 px-2">95</span>
-        <span>= 950</span>
+        <PriceSetter price={price} />
+        <span>=</span>
+        <span className="font-semibold text-slate-600">{totalFormatted}</span>
       </div>
     </div>
   )
