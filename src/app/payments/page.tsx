@@ -1,4 +1,4 @@
-import { Pencil1Icon } from '@radix-ui/react-icons'
+import { Link2Icon, Pencil1Icon } from '@radix-ui/react-icons'
 import { desc, sql } from 'drizzle-orm'
 import Link from 'next/link'
 
@@ -44,11 +44,11 @@ async function fetchPayments() {
 
 export default async function PaymentsPage() {
   const fetchedPayments = await fetchPayments()
-  // console.log(payments)
+
   return (
     <ContentWrapper>
-      <main className="flex min-h-screen flex-col items-center bg-slate-50">
-        <div className="w-11/12 md:w-4/6 ">
+      <main className="flex min-h-screen flex-col items-center bg-slate-100">
+        <div className="w-10/12 md:w-3/6 ">
           <div className="my-3 flex items-center justify-between">
             <div className="flex items-center gap-3">
               <NavButton />
@@ -62,17 +62,15 @@ export default async function PaymentsPage() {
           <Accordion type="single" collapsible className="w-full">
             {fetchedPayments?.map(payment => (
               <AccordionItem key={payment.id} value={payment.id.toString()}>
-                <AccordionTrigger className="w-64">
-                  <div className="mr-3 flex w-full items-center text-left">
-                    <div className="flex w-full gap-3">
-                      <span className="w-20 text-sm font-semibold">
-                        {payment.paid_by_name as string}
-                      </span>
+                <AccordionTrigger className="w-64 py-2">
+                  <div className="mr-2 flex w-full items-center text-left text-xs">
+                    <div className="flex w-full gap-0">
+                      <span className="w-20 font-semibold">{payment.paid_by_name as string}</span>
                       <span>৳ {payment.amount}</span>
                     </div>
 
-                    <div className="flex w-80 items-center gap-3 text-right text-xs">
-                      <span className="text-xs text-slate-500">
+                    <div className="flex w-80 items-center gap-1 text-right text-xs">
+                      <span className="block w-36 text-xs text-slate-500">
                         {dateToLocal(payment.created_at as string)}
                       </span>
                       <Button asChild variant="ghost" size="icon">
@@ -84,7 +82,7 @@ export default async function PaymentsPage() {
                   </div>
                 </AccordionTrigger>
 
-                <AccordionContent className="mb-1  flex justify-between rounded-sm bg-slate-50 p-2 text-xs">
+                <AccordionContent className="mb-1 grid grid-cols-1 justify-between rounded-sm bg-slate-50 p-2 text-xs md:grid-cols-2">
                   <div>
                     <div className="flex">
                       <div className="w-24 text-slate-500">Note:</div>
@@ -104,6 +102,13 @@ export default async function PaymentsPage() {
                       <div className="w-24 text-slate-500">Inserted at:</div>
                       <div>{dateToLocal(payment.created_at as string)}</div>
                     </div>
+                  </div>
+                  <div>
+                    <Button variant="link" className="p-0 text-xs text-slate-500 underline">
+                      <Link href={`/payments/user/${payment.paid_by_id}`} className="flex gap-1">
+                        Payments by {payment.paid_by_name as string} <Link2Icon />
+                      </Link>
+                    </Button>
                   </div>
                 </AccordionContent>
               </AccordionItem>
