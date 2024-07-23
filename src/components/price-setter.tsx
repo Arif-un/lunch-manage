@@ -1,8 +1,10 @@
 'use client'
 
+import { type ChangeEvent } from 'react'
 import { useState } from 'react'
 
 import { DotsHorizontalIcon } from '@radix-ui/react-icons'
+import { useRouter } from 'next/navigation'
 import useSWR from 'swr'
 import useSWRMutation from 'swr/mutation'
 
@@ -25,49 +27,74 @@ import {
   SelectValue
 } from '@/src/components/ui/select'
 
-import { dateToday, fetcher, mutator } from '../lib/utils'
+import { fetcher, mutator } from '../lib/utils'
 import { Button } from './ui/button'
 import { Input } from './ui/input'
 import { Label } from './ui/label'
 
-const savedPrices = [
-  { label: '95', value: '95' },
-  { label: '105', value: '105' },
-  { label: '120', value: '120' },
-  { label: '150', value: '150' }
-]
+interface MealPrice {
+  id: number
+  label: string
+  price: number
+  description: string
+  is_default: number
+  created_by: number
+  updated_by: number
+  created_at: number
+  updated_at: number
+}
 
-export default function PriceSetter({ price }: { price: number }) {
+interface PricesResponse {
+  prices: MealPrice[]
+}
+
+export default function PriceSetter({ price, date }: { price: number; date: string }) {
   const { trigger: updatePrice, isMutating } = useSWRMutation(`/api/meals/prices/update`, mutator)
-  const date = dateToday()
-  const { data, isLoading } = useSWR(`/api/meals/prices/${date}`, fetcher)
-  // console.log('==== ~ data:', data)
-
+  const { data: { prices } = {}, isLoading } = useSWR<PricesResponse>(`/api/meals/prices`, fetcher)
   const [drawerOpen, setDrawerOpen] = useState(false)
-  const [newPrice, setNewPrice] = useState(price)
-  const isSavedPrice = savedPrices.find(p => p.value === price.toString())
-  // console.log('==== ~ isSavedPrice:', isSavedPrice)
-  const [predefinedPrice, setPredefinedPrice] = useState(isSavedPrice ? price.toString() : 'custom')
-  // const [isCustomPrice, setIsCustomPrice] = useState(false)
-  const [note, setNote] = useState('')
+  const CUSTOM_PRICE_DEFAULT = { price, note: '', label: '' }
+  const [customPrice, setCustomPrice] = useState(CUSTOM_PRICE_DEFAULT)
+  const [predefinedPrice, setPredefinedPrice] = useState(price.toString())
+  const router = useRouter()
 
-  const handlePrice = (e: any) => {
-    setNewPrice(e.target.valueAsNumber)
+  if (!prices || isLoading) {
+    return (
+      <div className="flex size-8 items-center justify-center rounded-md border bg-white p-1">
+        <DotsHorizontalIcon />
+      </div>
+    )
   }
 
   const handleSave = async () => {
-    if (price === newPrice) {
+    let isCustomPrice = true
+    const { price: newPrice, note, label } = customPrice
+
+    let updatedPrice = newPrice
+    if (predefinedPrice !== 'custom') {
+      isCustomPrice = false
+      updatedPrice = Number(predefinedPrice)
+    }
+
+    if (price === updatedPrice) {
       setDrawerOpen(false)
       return
     }
 
-    const res = await updatePrice({ newPrice, date, note })
+    const res = await updatePrice({ newPrice: updatedPrice, date, note, label, isCustomPrice })
 
     if (res.success) {
       setDrawerOpen(false)
+      router.refresh()
     } else {
       console.error(res)
     }
+  }
+
+  const handleCustomPrice = (type: 'price' | 'note' | 'label') => (e: ChangeEvent<HTMLInputElement>) => {
+    setCustomPrice(prv => ({
+      ...prv,
+      [type]: type === 'price' ? e.target.valueAsNumber : e.target.value
+    }))
   }
 
   return (
@@ -95,8 +122,8 @@ export default function PriceSetter({ price }: { price: number }) {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectGroup>
-                    {data?.mealPrices?.map(p => (
-                      <SelectItem key={p.id} value={p.price}>
+                    {prices?.map(p => (
+                      <SelectItem key={p.id} value={p.price.toString()}>
                         <div className="flex">
                           <span className="block w-24">{p.label}</span>
                           <span>{p.price}</span>
@@ -109,15 +136,27 @@ export default function PriceSetter({ price }: { price: number }) {
               </Select>
             </div>
 
-            {!isSavedPrice && (
+            {predefinedPrice === 'custom' && (
               <>
+                <div className="flex items-center gap-3">
+                  <Label htmlFor="note" className="w-36 text-slate-500">
+                    Label
+                  </Label>
+                  <Input
+                    value={customPrice.label}
+                    onChange={handleCustomPrice('label')}
+                    id="note"
+                    type="text"
+                    placeholder="Label"
+                  />
+                </div>
                 <div className="flex items-center gap-3">
                   <Label htmlFor="custom-price" className="w-36 text-slate-500">
                     Custom Price
                   </Label>
                   <Input
-                    value={newPrice}
-                    onChange={handlePrice}
+                    value={customPrice.price}
+                    onChange={handleCustomPrice('price')}
                     id="custom-price"
                     type="number"
                     placeholder="Price..."
@@ -128,8 +167,8 @@ export default function PriceSetter({ price }: { price: number }) {
                     Note <span className="text-xs">(Optional)</span>
                   </Label>
                   <Input
-                    value={note}
-                    onChange={({ target: { value } }) => setNote(value)}
+                    value={customPrice.note}
+                    onChange={handleCustomPrice('note')}
                     id="note"
                     type="text"
                     placeholder="Write a reason"
