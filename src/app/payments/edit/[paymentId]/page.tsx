@@ -1,3 +1,5 @@
+'use server'
+
 import { eq } from 'drizzle-orm'
 import { revalidatePath } from 'next/cache'
 import { headers } from 'next/headers'
@@ -74,7 +76,7 @@ export default async function EditPaymentModal({
 
     if (!validation.success) {
       console.error(validation.error)
-      redirect('/payments/create?error=validation')
+      redirect('/payments/edit?error=validation')
     }
 
     await db
@@ -100,7 +102,7 @@ export default async function EditPaymentModal({
   }
 
   return (
-    <DialogClient open={pathName.includes('/payments/edit')} to="/payments">
+    <DialogClient open={pathName.includes('/payments/edit')}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>Edit Payment</DialogTitle>
