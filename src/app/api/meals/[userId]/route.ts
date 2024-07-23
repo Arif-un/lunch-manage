@@ -25,7 +25,6 @@ interface Meal {
  * @param userId
  * @param userId.params
  * @param userId.params.userId
- * @param userId.params.date
  */
 export async function POST(
   request: NextRequest,
@@ -43,17 +42,17 @@ export async function POST(
   if (status === 'yes') {
     amount = await getMealPrice(date)
   }
-
   const existingMealRow = await findExistingMeal(userId, date)
 
   let isSuccess: boolean | undefined = true
+
   if (existingMealRow) {
     isSuccess = await updateExistingMeal(existingMealRow, amount, loginUserId)
   } else {
     isSuccess = await createNewMeal({ userId, amount, date, loginUserId })
   }
 
-  return Response.json({ success: isSuccess, message: 'Meal Updated'})
+  return Response.json({ success: isSuccess, message: 'Meal Updated' })
 }
 
 async function createNewMeal({
@@ -136,9 +135,9 @@ async function updateExistingMeal(row: Meal, amount: number, loginUserId: number
 
 export async function getMealPrice(date: string) {
   const [todaysPrice] = await db
-    .select({ price: MealPrices.price })
-    .from(MealPrices)
-    .where(eq(sql`date(${MealPrices.created_at})`, sql`date(${date})`))
+    .select({ price: Meals.amount })
+    .from(Meals)
+    .where(eq(sql`date(${Meals.created_at})`, sql`date(${date})`))
     .limit(1)
     .execute()
 
