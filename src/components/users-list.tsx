@@ -1,4 +1,7 @@
+import Link from 'next/link'
+
 import { fetchUsers } from '../server/usersActions'
+import { Button } from './ui/button'
 
 export default async function UsersList() {
   const users = await fetchUsers()
@@ -15,7 +18,24 @@ export default async function UsersList() {
                 <span>{user.balance}</span>
               </div>
             </div>
-            <span className="text-xs text-slate-500">{user.email}</span>
+            <div className="flex flex-col">
+              <span className="text-xs text-slate-500">{user.email}</span>
+              <div>
+                <Button
+                  asChild
+                  size="sm"
+                  className="mr-2 mt-1 h-6 bg-white px-2 py-0 text-xs text-slate-800 hover:bg-slate-50 hover:text-slate-950"
+                >
+                  <Link href={`/payments/user/${user.id}`}>Payments</Link>
+                </Button>
+                <Button
+                  size="sm"
+                  className="mt-1 h-6 bg-white px-2 py-0 text-xs text-slate-800 hover:bg-slate-50 hover:text-slate-950"
+                >
+                  Meals
+                </Button>
+              </div>
+            </div>
           </div>
         </div>
       ))}
