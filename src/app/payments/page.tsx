@@ -59,61 +59,63 @@ export default async function PaymentsPage() {
             </Button>
           </div>
 
-          <Accordion type="single" collapsible className="w-full">
-            {fetchedPayments?.map(payment => (
-              <AccordionItem key={payment.id} value={payment.id.toString()}>
-                <AccordionTrigger className="w-64 py-2">
-                  <div className="mr-2 flex w-full items-center text-left text-xs">
-                    <div className="flex w-full gap-0">
-                      <span className="w-20 font-semibold">{payment.paid_by_name as string}</span>
-                      <span>৳ {payment.amount}</span>
-                    </div>
+          <div>
+            <Accordion type="single" collapsible className="w-full">
+              {fetchedPayments?.map(payment => (
+                <AccordionItem key={payment.id} value={payment.id.toString()}>
+                  <AccordionTrigger className="w-64 py-2">
+                    <div className="mr-2 flex w-full items-center text-left text-xs">
+                      <div className="flex w-full gap-0">
+                        <span className="w-20 font-semibold">{payment.paid_by_name as string}</span>
+                        <span>৳ {payment.amount}</span>
+                      </div>
 
-                    <div className="flex w-80 items-center gap-1 text-right text-xs">
-                      <span className="block w-36 text-xs text-slate-500">
-                        {dateToLocal(payment.created_at as string)}
-                      </span>
-                      <Button asChild variant="ghost" size="icon">
-                        <Link href={`/payments/edit/${payment.id}`}>
-                          <Pencil1Icon />
+                      <div className="flex w-80 items-center gap-1 text-right text-xs">
+                        <span className="block w-36 text-xs text-slate-500">
+                          {dateToLocal(payment.created_at as string)}
+                        </span>
+                        <Button asChild variant="ghost" size="icon">
+                          <Link href={`/payments/edit/${payment.id}`}>
+                            <Pencil1Icon />
+                          </Link>
+                        </Button>
+                      </div>
+                    </div>
+                  </AccordionTrigger>
+
+                  <AccordionContent className="mb-1 grid grid-cols-1 justify-between rounded-sm bg-slate-50 p-2 text-xs md:grid-cols-2">
+                    <div>
+                      <div className="flex">
+                        <div className="w-24 text-slate-500">Note:</div>
+                        <div>{payment.note}</div>
+                      </div>
+                      <div className="flex">
+                        <div className="w-24 text-slate-500">Received by:</div>
+                        <div>{payment.paid_to_name as string}</div>
+                      </div>
+                    </div>
+                    <div>
+                      <div className="flex">
+                        <div className="w-24 text-slate-500">Last updated:</div>
+                        <div>{dateToLocal(payment.updated_at as string)}</div>
+                      </div>
+                      <div className="flex">
+                        <div className="w-24 text-slate-500">Inserted at:</div>
+                        <div>{dateToLocal(payment.created_at as string)}</div>
+                      </div>
+                    </div>
+                    <div>
+                      <Button variant="link" className="p-0 text-xs text-slate-500 underline">
+                        <Link href={`/payments/user/${payment.paid_by_id}`} className="flex gap-1">
+                          Payments by {payment.paid_by_name as string} <Link2Icon />
                         </Link>
                       </Button>
                     </div>
-                  </div>
-                </AccordionTrigger>
-
-                <AccordionContent className="mb-1 grid grid-cols-1 justify-between rounded-sm bg-slate-50 p-2 text-xs md:grid-cols-2">
-                  <div>
-                    <div className="flex">
-                      <div className="w-24 text-slate-500">Note:</div>
-                      <div>{payment.note}</div>
-                    </div>
-                    <div className="flex">
-                      <div className="w-24 text-slate-500">Received by:</div>
-                      <div>{payment.paid_to_name as string}</div>
-                    </div>
-                  </div>
-                  <div>
-                    <div className="flex">
-                      <div className="w-24 text-slate-500">Last updated:</div>
-                      <div>{dateToLocal(payment.updated_at as string)}</div>
-                    </div>
-                    <div className="flex">
-                      <div className="w-24 text-slate-500">Inserted at:</div>
-                      <div>{dateToLocal(payment.created_at as string)}</div>
-                    </div>
-                  </div>
-                  <div>
-                    <Button variant="link" className="p-0 text-xs text-slate-500 underline">
-                      <Link href={`/payments/user/${payment.paid_by_id}`} className="flex gap-1">
-                        Payments by {payment.paid_by_name as string} <Link2Icon />
-                      </Link>
-                    </Button>
-                  </div>
-                </AccordionContent>
-              </AccordionItem>
-            ))}
-          </Accordion>
+                  </AccordionContent>
+                </AccordionItem>
+              ))}
+            </Accordion>
+          </div>
         </div>
       </main>
     </ContentWrapper>

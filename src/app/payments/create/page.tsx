@@ -45,7 +45,7 @@ export default async function CreatePaymentModal({
   const users = await fetchUsers()
   const headersList = headers()
   const pathName = headersList.get('x-current-path') || ''
-
+  console.log({ pathName })
   const handleSubmit = async (formData: FormData) => {
     'use server'
 
@@ -77,13 +77,13 @@ export default async function CreatePaymentModal({
       })
       .run()
 
-    revalidatePath('/payments')
+    revalidatePath('/payments', 'page')
     permanentRedirect('/payments')
   }
 
   return (
-    <DialogClient open={pathName === '/payments/create'} to="/payments">
-      <DialogContent className="sm:max-w-[425px]">
+    <DialogClient open={pathName === '/payments/create'}>
+      <DialogContent className="  console.log({pathName})sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>Add Payment</DialogTitle>
         </DialogHeader>
