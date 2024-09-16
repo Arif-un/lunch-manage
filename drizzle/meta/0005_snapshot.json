@@ -1,8 +1,8 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "241da490-9f25-4a08-b81b-ab40b0fdc6a4",
-  "prevId": "00000000-0000-0000-0000-000000000000",
+  "id": "f8e202ae-20ae-4713-8678-d4cd6ecfbcdb",
+  "prevId": "aa028fd2-2377-42c8-bcb8-40cc339c1d97",
   "tables": {
     "meal_prices": {
       "name": "meal_prices",
@@ -186,6 +186,13 @@
           "name": "id",
           "type": "integer",
           "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "type": {
+          "name": "type",
+          "type": "text",
+          "primaryKey": false,
           "notNull": true,
           "autoincrement": false
         },

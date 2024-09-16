@@ -1,3 +1,45 @@
+CREATE TABLE `meal_prices` (
+	`id` integer PRIMARY KEY NOT NULL,
+	`label` text,
+	`price` integer DEFAULT 0 NOT NULL,
+	`description` text,
+	`is_default` integer,
+	`created_at` integer,
+	`updated_at` integer DEFAULT (DATETIME('now', 'localtime'))
+);
+--> statement-breakpoint
+CREATE TABLE `meals` (
+	`id` integer PRIMARY KEY NOT NULL,
+	`user_id` integer NOT NULL,
+	`quantity` integer DEFAULT 1 NOT NULL,
+	`amount` integer DEFAULT 0 NOT NULL,
+	`note` text,
+	`created_by` integer NOT NULL,
+	`updated_by` integer NOT NULL,
+	`created_at` integer,
+	`updated_at` integer DEFAULT (DATETIME('now', 'localtime')),
+	FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON UPDATE no action ON DELETE no action,
+	FOREIGN KEY (`created_by`) REFERENCES `users`(`id`) ON UPDATE no action ON DELETE no action,
+	FOREIGN KEY (`updated_by`) REFERENCES `users`(`id`) ON UPDATE no action ON DELETE no action
+);
+--> statement-breakpoint
+CREATE TABLE `meals_log` (
+	`id` integer PRIMARY KEY NOT NULL,
+	`meal_id` integer NOT NULL,
+	`user_id` integer NOT NULL,
+	`quantity` integer DEFAULT 1 NOT NULL,
+	`amount` integer DEFAULT 0 NOT NULL,
+	`note` text,
+	`created_by` integer NOT NULL,
+	`updated_by` integer NOT NULL,
+	`created_at` integer,
+	`updated_at` integer DEFAULT (DATETIME('now', 'localtime')),
+	FOREIGN KEY (`meal_id`) REFERENCES `meals`(`id`) ON UPDATE no action ON DELETE no action,
+	FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON UPDATE no action ON DELETE no action,
+	FOREIGN KEY (`created_by`) REFERENCES `users`(`id`) ON UPDATE no action ON DELETE no action,
+	FOREIGN KEY (`updated_by`) REFERENCES `users`(`id`) ON UPDATE no action ON DELETE no action
+);
+--> statement-breakpoint
 CREATE TABLE `payments` (
 	`id` integer PRIMARY KEY NOT NULL,
 	`amount` integer DEFAULT 0 NOT NULL,

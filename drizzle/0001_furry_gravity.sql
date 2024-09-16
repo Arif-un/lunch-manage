@@ -1,0 +1,1 @@
+ALTER TABLE `meals_log` ADD `type` text NOT NULL;

@@ -1,8 +1,8 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "241da490-9f25-4a08-b81b-ab40b0fdc6a4",
-  "prevId": "00000000-0000-0000-0000-000000000000",
+  "id": "40ca9ac2-49bd-46dc-ae3e-2b85a73e35c5",
+  "prevId": "6cd46b34-3a65-4f4e-9761-ba3677335af7",
   "tables": {
     "meal_prices": {
       "name": "meal_prices",

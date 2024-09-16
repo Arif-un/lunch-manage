@@ -57,7 +57,7 @@ export async function login(email: string, password: string): Promise<boolean> {
   // Here you would typically check the email and password against your database
   // For this example, we'll just check if the email includes '@' and the password is longer than 3 characters
   if (email.includes('@') && password.length > 3) {
-    const token = await encrypt({ email, id: 1 })
+    const token = await encrypt({ email, id: 0 })
     cookies().set('token', token, { httpOnly: true })
     return true
   }
