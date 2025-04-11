@@ -36,6 +36,66 @@ const formValidation = z.object({
   created_at: z.any()
 })
 
+async function handleSubmit(formData: FormData) {
+  'use server'
+
+  const paidBy = Number(formData.get('paid-by'))
+  const paidTo = Number(formData.get('paid-to'))
+  const { id: loginUserId } = (await getSession()) || {}
+
+  // Redirect if user is not logged in
+  if (!loginUserId) {
+    redirect('/payments/create?error=auth')
+  }
+
+  // Fetch users inside the server action to make it available
+  const users = await fetchUsers()
+
+  // Validate that the users exist in the database
+  const userExists =
+    users?.some(user => user.id === paidBy) &&
+    users?.some(user => user.id === paidTo) &&
+    users?.some(user => user.id === Number(loginUserId))
+
+  if (!userExists) {
+    console.error('One or more user IDs do not exist')
+    redirect('/payments/create?error=invalid_user')
+  }
+
+  const validation = formValidation.safeParse({
+    amount: Number(formData.get('amount')),
+    paid_by: paidBy,
+    paid_to: paidTo,
+    note: formData.get('note') as string,
+    updated_by: Number(loginUserId),
+    created_by: Number(loginUserId),
+    created_at: sql`(DATETIME('now', 'localtime'))`
+  })
+
+  if (!validation.success) {
+    console.error(validation.error)
+    redirect('/payments/create?error=validation')
+  }
+
+  const [{ insertedId: paymentId }] = await db
+    .insert(Payments)
+    .values(validation.data)
+    .returning({ insertedId: Payments.id })
+
+  try {
+    await db.insert(paymentsLog).values({
+      ...validation.data,
+      type: 'create',
+      payment_id: paymentId
+    })
+  } catch (error) {
+    console.error('Error inserting into PaymentsLog:', error)
+  }
+
+  revalidatePath('/payments', 'page')
+  redirect('/payments/create?success=true')
+}
+
 export default async function CreatePaymentModal(props: {
   searchParams: Promise<{ [key: string]: string }>
 }) {
@@ -50,71 +110,6 @@ export default async function CreatePaymentModal(props: {
   const users = await fetchUsers()
   const headersList = await headers()
   const pathName = headersList.get('x-current-path') || ''
-  console.log({ pathName })
-
-  const handleSubmit = async (formData: FormData) => {
-    'use server'
-
-    const paidBy = Number(formData.get('paid-by'))
-    const paidTo = Number(formData.get('paid-to'))
-    const { id: loginUserId } = (await getSession()) || {}
-
-    // Redirect if user is not logged in
-    if (!loginUserId) {
-      return { error: 'auth' }
-    }
-
-    // Fetch users inside the server action to make it available
-    const users = await fetchUsers()
-
-    // Validate that the users exist in the database
-    const userExists =
-      users?.some(user => user.id === paidBy) &&
-      users?.some(user => user.id === paidTo) &&
-      users?.some(user => user.id === Number(loginUserId))
-
-    if (!userExists) {
-      console.error('One or more user IDs do not exist')
-      return { error: 'invalid_user' }
-    }
-
-    const validation = formValidation.safeParse({
-      amount: Number(formData.get('amount')),
-      paid_by: paidBy,
-      paid_to: paidTo,
-      note: formData.get('note') as string,
-      updated_by: Number(loginUserId),
-      created_by: Number(loginUserId),
-      created_at: sql`(DATETIME('now', 'localtime'))`
-    })
-
-    if (!validation.success) {
-      console.error(validation.error)
-      return { error: 'validation' }
-    }
-
-    try {
-      const [{ insertedId: paymentId }] = await db
-        .insert(Payments)
-        .values(validation.data)
-        .returning({ insertedId: Payments.id })
-
-      await db
-        .insert(paymentsLog)
-        .values({
-          ...validation.data,
-          type: 'create',
-          payment_id: paymentId
-        })
-        .run()
-
-      revalidatePath('/payments', 'page')
-      return { success: true }
-    } catch (error) {
-      console.error('Database error:', error)
-      return { error: 'database' }
-    }
-  }
 
   return (
     <DialogClient open={pathName === '/payments/create'} actionResult={searchParams as any}>

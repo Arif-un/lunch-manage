@@ -46,14 +46,53 @@ async function fetchPaymentById(id: string) {
   return res?.[0]
 }
 
-export default async function EditPaymentModal(
-  props: {
-    params: Promise<{ paymentId: string }>
-    searchParams: Promise<{ [key: string]: string }>
+async function handleSubmit(formData: FormData) {
+  'use server'
+
+  const { id: loginUserId } = (await getSession()) || {}
+  const paymentId = formData.get('payment-id') as string
+
+  const validation = formValidation.safeParse({
+    amount: Number(formData.get('amount')),
+    paid_by: Number(formData.get('paid-by')),
+    paid_to: Number(formData.get('paid-to')),
+    note: formData.get('note') as string,
+    updated_by: Number(loginUserId)
+  })
+
+  if (!validation.success) {
+    console.error(validation.error)
+    redirect('/payments/edit?error=validation')
   }
-) {
-  const searchParams = await props.searchParams;
-  const params = await props.params;
+
+  await db
+    .update(payments)
+    .set({
+      amount: validation.data.amount,
+      paid_by: validation.data.paid_by,
+      paid_to: validation.data.paid_to,
+      note: validation.data.note,
+      updated_by: validation.data.updated_by
+    })
+    .where(eq(payments.id, Number(paymentId)))
+
+  await db.insert(PaymentsLog).values({
+    ...validation.data,
+    type: 'edit',
+    created_by: Number(loginUserId),
+    payment_id: Number(paymentId)
+  })
+
+  revalidatePath('/payments')
+  permanentRedirect('/payments')
+}
+
+export default async function EditPaymentModal(props: {
+  params: Promise<{ paymentId: string }>
+  searchParams: Promise<{ [key: string]: string }>
+}) {
+  const searchParams = await props.searchParams
+  const params = await props.params
   const { paymentId } = params
   const headersList = await headers()
   const pathName = headersList.get('x-current-path') || ''
@@ -64,44 +103,6 @@ export default async function EditPaymentModal(
   ])
   const { id: loginUserId } = sessions || {}
 
-  const handleSubmit = async (formData: FormData) => {
-    'use server'
-
-    const validation = formValidation.safeParse({
-      amount: Number(formData.get('amount')),
-      paid_by: Number(formData.get('paid-by')),
-      paid_to: Number(formData.get('paid-to')),
-      note: formData.get('note') as string,
-      updated_by: Number(loginUserId)
-    })
-
-    if (!validation.success) {
-      console.error(validation.error)
-      redirect('/payments/edit?error=validation')
-    }
-
-    await db
-      .update(payments)
-      .set({
-        amount: validation.data.amount,
-        paid_by: validation.data.paid_by,
-        paid_to: validation.data.paid_to,
-        note: validation.data.note,
-        updated_by: validation.data.updated_by
-      })
-      .where(eq(payments.id, Number(paymentId)))
-
-    await db.insert(PaymentsLog).values({
-      ...validation.data,
-      type: 'edit',
-      created_by: Number(loginUserId),
-      payment_id: Number(paymentId)
-    })
-
-    revalidatePath('/payments')
-    permanentRedirect('/payments')
-  }
-
   return (
     <DialogClient open={pathName.includes('/payments/edit')}>
       <DialogContent className="sm:max-w-[425px]">
@@ -109,6 +110,7 @@ export default async function EditPaymentModal(
           <DialogTitle>Edit Payment</DialogTitle>
         </DialogHeader>
         <form action={handleSubmit}>
+          <input type="hidden" name="payment-id" value={paymentId} />
           <div className="grid gap-4 py-4">
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="name" className="text-right">

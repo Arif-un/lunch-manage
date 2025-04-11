@@ -70,11 +70,12 @@ export default async function PaymentsPage() {
                         <span>৳ {payment.amount}</span>
                       </div>
 
-                      <div className="flex w-80 items-center gap-1 text-right text-xs">
+                      <div className="flex w-80 items-center gap-2 text-right text-xs">
                         <span className="block w-36 text-xs text-slate-500">
                           {dateToLocal(payment.created_at as string)}
                         </span>
-                        <Button asChild variant="ghost" size="icon">
+
+                        <Button asChild variant="outline" size="icon" className="size-8">
                           <Link href={`/payments/edit/${payment.id}`}>
                             <Pencil1Icon />
                           </Link>
