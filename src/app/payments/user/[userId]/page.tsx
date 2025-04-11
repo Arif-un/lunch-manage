@@ -4,6 +4,7 @@ import Link from 'next/link'
 
 import ContentWrapper from '@/src/components/content-wrapper'
 import DateFromTo from '@/src/components/date-from-to'
+import DeletePaymentButton from '@/src/components/delete-payment-button'
 import ItemPerPage from '@/src/components/item-per-page'
 import NavButton from '@/src/components/nav-button'
 import { Pagination } from '@/src/components/pagination'
@@ -68,18 +69,14 @@ async function fetchPaymentsByUser(userId: number, page: number, itemsPerPage: n
   return { payments, totalCount, totalAmount }
 }
 
-export default async function PaymentsOfUserPage(
-  props: {
-    params: Promise<{ userId: string }>
-    searchParams: Promise<{ page?: string; item?: string }>
-  }
-) {
-  const searchParams = await props.searchParams;
-  const params = await props.params;
+export default async function PaymentsOfUserPage(props: {
+  params: Promise<{ userId: string }>
+  searchParams: Promise<{ page?: string; item?: string }>
+}) {
+  const searchParams = await props.searchParams
+  const params = await props.params
 
-  const {
-    userId
-  } = params;
+  const { userId } = params
 
   const pageNum = Number(searchParams.page) || 1
   const itemsPerPage = Number(searchParams.item) || DEFAULT_ITEMS_PER_PAGE
@@ -134,14 +131,18 @@ export default async function PaymentsOfUserPage(
                       <span className="block w-36 text-xs text-slate-500">
                         {dateToLocal(payment.created_at as string)}
                       </span>
-                      <Button asChild variant="ghost" size="icon">
-                        <Link href={`/payments/edit/${payment.id}`}>
-                          <Pencil1Icon />
-                        </Link>
-                      </Button>
                     </div>
                   </div>
                 </AccordionTrigger>
+
+                <div className="flex justify-end gap-2 mt-1 mb-1 mr-1">
+                  <Button asChild variant="ghost" size="icon">
+                    <Link href={`/payments/edit/${payment.id}`}>
+                      <Pencil1Icon />
+                    </Link>
+                  </Button>
+                  <DeletePaymentButton paymentId={payment.id} />
+                </div>
 
                 <AccordionContent className="mb-1 grid grid-cols-1 justify-between rounded-sm bg-slate-50 p-2 text-xs md:grid-cols-2">
                   <div>

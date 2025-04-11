@@ -3,6 +3,7 @@ import { desc, sql } from 'drizzle-orm'
 import Link from 'next/link'
 
 import ContentWrapper from '@/src/components/content-wrapper'
+import DeletePaymentButton from '@/src/components/delete-payment-button'
 import NavButton from '@/src/components/nav-button'
 import {
   Accordion,
@@ -63,26 +64,32 @@ export default async function PaymentsPage() {
             <Accordion type="single" collapsible className="w-full">
               {fetchedPayments?.map(payment => (
                 <AccordionItem key={payment.id} value={payment.id.toString()}>
-                  <AccordionTrigger className="w-64 py-2">
-                    <div className="mr-2 flex w-full items-center text-left text-xs">
-                      <div className="flex w-full gap-0">
-                        <span className="w-20 font-semibold">{payment.paid_by_name as string}</span>
-                        <span>৳ {payment.amount}</span>
-                      </div>
+                  <div className='flex w-full justify-between'>
+                    <AccordionTrigger className="md:w-96 py-2 hover:bg-slate-200 rounded-md">
+                      <div className="mr-2 flex w-full items-center text-left text-xs">
+                        <div className="flex w-full gap-0">
+                          <span className="w-20 font-semibold">{payment.paid_by_name as string}</span>
+                          <span>৳ {payment.amount}</span>
+                        </div>
 
-                      <div className="flex w-80 items-center gap-2 text-right text-xs">
-                        <span className="block w-36 text-xs text-slate-500">
-                          {dateToLocal(payment.created_at as string)}
-                        </span>
-
-                        <Button asChild variant="outline" size="icon" className="size-8">
-                          <Link href={`/payments/edit/${payment.id}`}>
-                            <Pencil1Icon />
-                          </Link>
-                        </Button>
+                        <div className="flex items-center gap-2 text-right text-xs">
+                          <span className="block w-24 text-xs text-slate-500">
+                            {dateToLocal(payment.created_at as string)}
+                          </span>
+                        </div>
                       </div>
+                    </AccordionTrigger>
+
+                    <div className="flex justify-end gap-2 mt-1 mb-1 mr-1">
+                      <Button asChild variant="outline" size="icon" className="size-8">
+                        <Link href={`/payments/edit/${payment.id}`}>
+                          <Pencil1Icon />
+                        </Link>
+                      </Button>
+
+                      <DeletePaymentButton paymentId={payment.id} />
                     </div>
-                  </AccordionTrigger>
+                  </div>
 
                   <AccordionContent className="mb-1 grid grid-cols-1 justify-between rounded-sm bg-slate-50 p-2 text-xs md:grid-cols-2">
                     <div>
