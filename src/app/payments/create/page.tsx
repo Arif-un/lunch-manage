@@ -1,7 +1,7 @@
 import { sql } from 'drizzle-orm'
 import { revalidatePath } from 'next/cache'
 import { headers } from 'next/headers'
-import { permanentRedirect, redirect } from 'next/navigation'
+import { redirect } from 'next/navigation'
 import z from 'zod'
 
 import BackBtnClient from '@/src/components/back-btn-client'
@@ -57,16 +57,25 @@ export default async function CreatePaymentModal(props: {
 
     const paidBy = Number(formData.get('paid-by'))
     const paidTo = Number(formData.get('paid-to'))
+    const { id: loginUserId } = (await getSession()) || {}
+
+    // Redirect if user is not logged in
+    if (!loginUserId) {
+      return { error: 'auth' }
+    }
+
+    // Fetch users inside the server action to make it available
+    const users = await fetchUsers()
 
     // Validate that the users exist in the database
     const userExists =
-      users.some(user => user.id === paidBy) &&
-      users.some(user => user.id === paidTo) &&
-      users.some(user => user.id === Number(loginUserId))
+      users?.some(user => user.id === paidBy) &&
+      users?.some(user => user.id === paidTo) &&
+      users?.some(user => user.id === Number(loginUserId))
 
     if (!userExists) {
       console.error('One or more user IDs do not exist')
-      redirect('/payments/create?error=invalid_user')
+      return { error: 'invalid_user' }
     }
 
     const validation = formValidation.safeParse({
@@ -81,7 +90,7 @@ export default async function CreatePaymentModal(props: {
 
     if (!validation.success) {
       console.error(validation.error)
-      redirect('/payments/create?error=validation')
+      return { error: 'validation' }
     }
 
     try {
@@ -100,16 +109,16 @@ export default async function CreatePaymentModal(props: {
         .run()
 
       revalidatePath('/payments', 'page')
-      permanentRedirect('/payments')
+      return { success: true }
     } catch (error) {
       console.error('Database error:', error)
-      redirect('/payments/create?error=database')
+      return { error: 'database' }
     }
   }
 
   return (
-    <DialogClient open={pathName === '/payments/create'}>
-      <DialogContent className="  console.log({pathName})sm:max-w-[425px]">
+    <DialogClient open={pathName === '/payments/create'} actionResult={searchParams as any}>
+      <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>Add Payment</DialogTitle>
         </DialogHeader>
