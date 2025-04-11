@@ -27,11 +27,9 @@ interface Meal {
  * @param userId.params.userId
  */
 export async function POST(request: NextRequest, props: { params: Promise<{ userId: string }> }) {
-  const params = await props.params;
+  const params = await props.params
 
-  const {
-    userId
-  } = params;
+  const { userId } = params
 
   const { status, date } = await request.json()
   const userIdForMeal = Number(userId)

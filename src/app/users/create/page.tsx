@@ -50,7 +50,7 @@ export default function CreateUser() {
       <main className="flex min-h-screen flex-col items-center bg-slate-50">
         <div className="w-10/12 md:w-3/6">
           <div className="my-3 flex items-center gap-3">
-            <BackBtnClient type="button" size={'icon'} variant={'outline'}>
+            <BackBtnClient type="button" size="icon" variant="outline">
               <ChevronLeftIcon />
             </BackBtnClient>
             <h2 className="font-semibold">Create New User</h2>

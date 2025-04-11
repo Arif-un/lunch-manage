@@ -80,9 +80,8 @@ export default function PriceSetter({ price, date }: { price: number; date: stri
       return
     }
 
-    console.log({ updatedPrice, date, note, label, isCustomPrice })
     const res = await updatePrice({ newPrice: updatedPrice, date, note, label, isCustomPrice })
-    console.log({ res })
+
     if (res.success) {
       setDrawerOpen(false)
       router.refresh()

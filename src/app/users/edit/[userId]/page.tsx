@@ -1,7 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-import { use } from 'react'
+import { use, useEffect, useState } from 'react'
 
 import { ChevronLeftIcon } from '@radix-ui/react-icons'
 import { useRouter } from 'next/navigation'
@@ -136,7 +135,7 @@ export default function EditUser({ params }: Props) {
         <main className="flex min-h-screen flex-col items-center bg-slate-50">
           <div className="w-10/12 md:w-3/6">
             <div className="my-3 flex items-center gap-3">
-              <BackBtnClient type="button" size={'icon'} variant={'outline'}>
+              <BackBtnClient type="button" size="icon" variant="outline">
                 <ChevronLeftIcon />
               </BackBtnClient>
               <h2 className="font-semibold">Edit User</h2>
@@ -159,7 +158,7 @@ export default function EditUser({ params }: Props) {
       <main className="flex min-h-screen flex-col items-center bg-slate-50">
         <div className="w-10/12 md:w-3/6">
           <div className="my-3 flex items-center gap-3">
-            <BackBtnClient type="button" size={'icon'} variant={'outline'}>
+            <BackBtnClient type="button" size="icon" variant="outline">
               <ChevronLeftIcon />
             </BackBtnClient>
             <h2 className="font-semibold">Edit User: {user.name}</h2>

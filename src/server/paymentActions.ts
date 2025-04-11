@@ -2,11 +2,12 @@
 
 import { eq } from 'drizzle-orm'
 import { revalidatePath } from 'next/cache'
+
 import { getSession } from '@/src/lib/auth'
 import db from '@/src/lib/db/connection'
+import { beforePaymentDelete } from '@/src/lib/db/hooks/paymentHooks'
 import Payments from '@/src/lib/db/schema/Payments'
 import PaymentsLog from '@/src/lib/db/schema/PaymentsLog'
-import { beforePaymentDelete } from '@/src/lib/db/hooks/paymentHooks'
 
 /**
  * Server action to delete a payment and log the deletion

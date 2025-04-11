@@ -99,12 +99,11 @@ export default async function EditPaymentModal(props: {
   const { paymentId } = params
   const headersList = await headers()
   const pathName = headersList.get('x-current-path') || ''
-  const [paymentEditData, users, sessions] = await Promise.all([
+  const [paymentEditData, users] = await Promise.all([
     fetchPaymentById(paymentId),
     fetchUsers(),
     getSession()
   ])
-  const { id: loginUserId } = sessions || {}
 
   return (
     <DialogClient open={pathName.includes('/payments/edit')}>

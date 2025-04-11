@@ -2,10 +2,10 @@
 
 import { and, eq, sql } from 'drizzle-orm'
 
+import { getSession } from '../lib/auth'
 import db from '../lib/db/connection'
 import Meals from '../lib/db/schema/Meals'
 import Users from '../lib/db/schema/Users'
-import { getSession } from '../lib/auth'
 
 export async function fetchUsersWithMeals(date: string) {
   try {
@@ -47,24 +47,23 @@ export async function fetchUsers() {
 export async function createUser(name: string, email: string, password: string) {
   try {
     // Check if email already exists
-    const existingUser = await db
-      .select()
-      .from(Users)
-      .where(eq(Users.email, email))
-      .limit(1)
+    const existingUser = await db.select().from(Users).where(eq(Users.email, email)).limit(1)
 
     if (existingUser.length > 0) {
       throw new Error('Email already exists')
     }
 
     // Create the new user
-    const result = await db.insert(Users).values({
-      name,
-      email,
-      password, // In a production app, the password should be hashed
-      created_at: sql`(DATETIME('now', 'localtime'))`,
-      updated_at: sql`(DATETIME('now', 'localtime'))`
-    }).returning({ id: Users.id })
+    const result = await db
+      .insert(Users)
+      .values({
+        name,
+        email,
+        password, // In a production app, the password should be hashed
+        created_at: sql`(DATETIME('now', 'localtime'))`,
+        updated_at: sql`(DATETIME('now', 'localtime'))`
+      })
+      .returning({ id: Users.id })
 
     if (!result.length) {
       throw new Error('Failed to create user')
@@ -89,90 +88,74 @@ export async function createUser(name: string, email: string, password: string) 
 export async function updateUser(
   userId: number,
   data: {
-    name?: string;
-    email?: string;
-    password?: string;
-    status?: string;
+    name?: string
+    email?: string
+    password?: string
+    status?: string
   }
 ) {
   try {
     // Get the current user's session to check permissions
-    const session = await getSession();
-    const currentUserId = session?.id;
+    const session = await getSession()
+    const currentUserId = session?.id
 
     if (!currentUserId) {
-      throw new Error('Authentication required');
+      throw new Error('Authentication required')
     }
 
     // First get the user to update for validation purposes
-    const userToUpdate = await db
-      .select()
-      .from(Users)
-      .where(eq(Users.id, userId))
-      .limit(1);
+    const userToUpdate = await db.select().from(Users).where(eq(Users.id, userId)).limit(1)
 
     if (!userToUpdate.length) {
-      throw new Error('User not found');
+      throw new Error('User not found')
     }
 
     // Check if current user is the user being updated or has admin role (assuming role 1 is admin)
     // First get current user to check their role
-    const currentUser = await db
-      .select()
-      .from(Users)
-      .where(eq(Users.id, currentUserId))
-      .limit(1);
+    const currentUser = await db.select().from(Users).where(eq(Users.id, currentUserId)).limit(1)
 
     if (!currentUser.length) {
-      throw new Error('Current user not found');
+      throw new Error('Current user not found')
     }
 
-    const isAdmin = currentUser[0].role === 1;
-    const isSelfUpdate = currentUserId === userId;
+    const isAdmin = currentUser[0].role === 1
+    const isSelfUpdate = currentUserId === userId
 
     // If not admin and not updating self, deny permission
     if (!isAdmin && !isSelfUpdate) {
-      throw new Error('Permission denied: You can only update your own account');
+      throw new Error('Permission denied: You can only update your own account')
     }
 
     // Check if email already exists (if email is being updated)
     if (data.email && data.email !== userToUpdate[0].email) {
-      const existingUser = await db
-        .select()
-        .from(Users)
-        .where(eq(Users.email, data.email))
-        .limit(1);
+      const existingUser = await db.select().from(Users).where(eq(Users.email, data.email)).limit(1)
 
       if (existingUser.length > 0) {
-        throw new Error('Email already exists');
+        throw new Error('Email already exists')
       }
     }
 
     // Update the user
     const updateData: Record<string, any> = {
       updated_at: sql`(DATETIME('now', 'localtime'))`
-    };
-
-    // Only include fields that are provided
-    if (data.name) updateData.name = data.name;
-    if (data.email) updateData.email = data.email;
-    if (data.password) updateData.password = data.password; // In production, hash the password
-    if (isAdmin && data.status) updateData.status = data.status;
-
-    const result = await db
-      .update(Users)
-      .set(updateData)
-      .where(eq(Users.id, userId))
-      .returning();
-
-    if (!result.length) {
-      throw new Error('Failed to update user');
     }
 
-    return result[0];
+    // Only include fields that are provided
+    if (data.name) updateData.name = data.name
+    if (data.email) updateData.email = data.email
+    if (data.password) updateData.password = data.password // In production, hash the password
+    if (isAdmin && data.status) updateData.status = data.status
+
+    const result = await db.update(Users).set(updateData).where(eq(Users.id, userId)).returning()
+
+    if (!result.length) {
+      throw new Error('Failed to update user')
+    }
+
+    return result[0]
   } catch (err) {
-    console.error('Error updating user:', err);
-    throw err;
+    console.error('Error updating user:', err)
+    throw err
   }
 }
 
@@ -184,9 +167,7 @@ export async function updateUser(
 export async function deleteUser(userId: number) {
   try {
     // Delete the user
-    const result = await db.delete(Users)
-      .where(eq(Users.id, userId))
-      .returning({ id: Users.id })
+    const result = await db.delete(Users).where(eq(Users.id, userId)).returning({ id: Users.id })
 
     if (!result.length) {
       throw new Error('Failed to delete user')

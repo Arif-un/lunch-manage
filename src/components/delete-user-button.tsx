@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 
+import { TrashIcon } from '@radix-ui/react-icons'
 import { useRouter } from 'next/navigation'
 
 import { Button } from '@/src/components/ui/button'
@@ -15,7 +16,6 @@ import {
   DialogTrigger
 } from '@/src/components/ui/dialog'
 import { deleteUser } from '@/src/server/usersActions'
-import { TrashIcon } from '@radix-ui/react-icons'
 
 interface DeleteUserButtonProps {
   userId: number
@@ -44,7 +44,7 @@ export default function DeleteUserButton({ userId, userName }: DeleteUserButtonP
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
         <Button variant="outline" size="sm" className="h-7 px-2 text-xs text-red-500">
-          <TrashIcon/>
+          <TrashIcon />
         </Button>
       </DialogTrigger>
       <DialogContent>

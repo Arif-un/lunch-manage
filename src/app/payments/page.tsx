@@ -64,8 +64,8 @@ export default async function PaymentsPage() {
             <Accordion type="single" collapsible className="w-full">
               {fetchedPayments?.map(payment => (
                 <AccordionItem key={payment.id} value={payment.id.toString()}>
-                  <div className='flex w-full justify-between'>
-                    <AccordionTrigger className="md:w-96 py-2 hover:bg-slate-200 rounded-md">
+                  <div className="flex w-full justify-between">
+                    <AccordionTrigger className="rounded-md py-2 hover:bg-slate-200 md:w-96">
                       <div className="mr-2 flex w-full items-center text-left text-xs">
                         <div className="flex w-full gap-0">
                           <span className="w-20 font-semibold">{payment.paid_by_name as string}</span>
@@ -80,7 +80,7 @@ export default async function PaymentsPage() {
                       </div>
                     </AccordionTrigger>
 
-                    <div className="flex justify-end gap-2 mt-1 mb-1 mr-1">
+                    <div className="my-1 mr-1 flex justify-end gap-2">
                       <Button asChild variant="outline" size="icon" className="size-8">
                         <Link href={`/payments/edit/${payment.id}`}>
                           <Pencil1Icon />

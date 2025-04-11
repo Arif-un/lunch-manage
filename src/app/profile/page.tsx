@@ -2,7 +2,6 @@
 
 import { ChevronLeftIcon } from '@radix-ui/react-icons'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
 import useSWR from 'swr'
 
 import BackBtnClient from '@/src/components/back-btn-client'
@@ -35,9 +34,6 @@ const fetcher = (url: string) =>
   })
 
 export default function ProfilePage() {
-  const router = useRouter()
-
-  // Use SWR to fetch user data with automatic revalidation
   const { data, error, isLoading } = useSWR('/api/users/me', fetcher, {
     revalidateOnFocus: true,
     revalidateIfStale: true,
@@ -51,7 +47,7 @@ export default function ProfilePage() {
     return (
       <ContentWrapper>
         <main className="flex min-h-screen flex-col items-center bg-slate-50">
-          <div className="w-10/12 md:w-3/6 mt-5">
+          <div className="mt-5 w-10/12 md:w-3/6">
             <div className="text-center">Loading profile...</div>
           </div>
         </main>
@@ -64,7 +60,7 @@ export default function ProfilePage() {
       <main className="flex min-h-screen flex-col items-center bg-slate-50">
         <div className="w-10/12 md:w-3/6">
           <div className="my-3 flex items-center gap-3">
-            <BackBtnClient type="button" size={'icon'} variant={'outline'}>
+            <BackBtnClient type="button" size="icon" variant="outline">
               <ChevronLeftIcon />
             </BackBtnClient>
             <h2 className="font-semibold">My Profile</h2>

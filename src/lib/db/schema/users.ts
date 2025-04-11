@@ -1,12 +1,6 @@
 import { sql } from 'drizzle-orm'
 import { integer, sqliteTable, text } from 'drizzle-orm/sqlite-core'
 
-const USER_ROLE= {
-  USER: 0,
-  ADMIN: 1,
-  CATERING_VENDOR: 2
-}
-
 const Users = sqliteTable('users', {
   id: integer('id').primaryKey(),
   name: text('name').notNull(),

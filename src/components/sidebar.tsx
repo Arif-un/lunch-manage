@@ -79,11 +79,11 @@ export default function Sidebar() {
             'p-0 justify-start flex items-center'
           ])}
         >
-          <PersonIcon className="mr-2 h-4 w-4" />
+          <PersonIcon className="mr-2 size-4" />
           {firstName}
         </Button>
 
-        <div className="my-2 border-t border-slate-700"></div>
+        <div className="my-2 border-t border-slate-700" />
 
         <Button
           variant="link"

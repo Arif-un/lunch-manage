@@ -135,7 +135,7 @@ export default async function PaymentsOfUserPage(props: {
                   </div>
                 </AccordionTrigger>
 
-                <div className="flex justify-end gap-2 mt-1 mb-1 mr-1">
+                <div className="my-1 mr-1 flex justify-end gap-2">
                   <Button asChild variant="ghost" size="icon">
                     <Link href={`/payments/edit/${payment.id}`}>
                       <Pencil1Icon />

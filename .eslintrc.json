@@ -29,7 +29,6 @@
         "tailwindcss",
         "simple-import-sort",
         "react",
-        "react-hooks",
         "jsx-a11y",
         "import",
         "promise",
@@ -44,7 +43,6 @@
         "plugin:prettier/recommended",
         "plugin:@typescript-eslint/recommended",
         "plugin:react/recommended",
-        "plugin:react-hooks/recommended",
         "plugin:import/errors",
         "plugin:import/recommended",
         "plugin:react/jsx-runtime",
@@ -141,7 +139,12 @@
           }
         ],
         "@typescript-eslint/no-non-null-assertion": "error",
-        "@typescript-eslint/no-unused-vars": ["error", { "argsIgnorePattern": "^_" }],
+        "@typescript-eslint/no-unused-vars": [
+          "error",
+          {
+            "argsIgnorePattern": "^_"
+          }
+        ],
         "@typescript-eslint/indent": "off",
         "@typescript-eslint/semi": "off",
         "@typescript-eslint/no-use-before-define": [
@@ -305,7 +308,6 @@
       }
     }
   ],
-
   "ignorePatterns": [
     "cypress"
   ]

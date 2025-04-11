@@ -1,6 +1,6 @@
 import { sql } from 'drizzle-orm'
+
 import db from '../connection'
-import Payments from '../schema/Payments'
 import PaymentsLog from '../schema/PaymentsLog'
 
 /**

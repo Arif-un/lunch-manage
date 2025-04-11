@@ -60,7 +60,7 @@ export default async function UsersList() {
                   className="h-7 px-2 text-xs text-blue-600 hover:bg-blue-50 hover:text-blue-700"
                 >
                   <Link href="/profile">
-                    <PersonIcon className="mr-1 h-3 w-3" />
+                    <PersonIcon className="mr-1 size-3" />
                     My Profile
                   </Link>
                 </Button>
