@@ -4,8 +4,12 @@ CREATE TABLE `meal_prices` (
 	`price` integer DEFAULT 0 NOT NULL,
 	`description` text,
 	`is_default` integer,
+	`created_by` integer NOT NULL,
+	`updated_by` integer NOT NULL,
 	`created_at` integer,
-	`updated_at` integer DEFAULT (DATETIME('now', 'localtime'))
+	`updated_at` integer DEFAULT (DATETIME('now', 'localtime')),
+	FOREIGN KEY (`created_by`) REFERENCES `users`(`id`) ON UPDATE no action ON DELETE no action,
+	FOREIGN KEY (`updated_by`) REFERENCES `users`(`id`) ON UPDATE no action ON DELETE no action
 );
 --> statement-breakpoint
 CREATE TABLE `meals` (
@@ -25,6 +29,7 @@ CREATE TABLE `meals` (
 --> statement-breakpoint
 CREATE TABLE `meals_log` (
 	`id` integer PRIMARY KEY NOT NULL,
+	`type` text NOT NULL,
 	`meal_id` integer NOT NULL,
 	`user_id` integer NOT NULL,
 	`quantity` integer DEFAULT 1 NOT NULL,
@@ -80,6 +85,7 @@ CREATE TABLE `users` (
 	`email` text NOT NULL,
 	`password` text NOT NULL,
 	`balance` integer DEFAULT 0,
+	`role` integer,
 	`status` text DEFAULT 'active',
 	`created_at` integer,
 	`updated_at` integer DEFAULT (CURRENT_TIMESTAMP)

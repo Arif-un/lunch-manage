@@ -19,7 +19,7 @@ export default function MealDate({ date }: { date: string }) {
     setMealDate(date)
   }, [date])
 
-  const handleDate = e => {
+  const handleDate = (e: React.ChangeEvent<HTMLInputElement>): void => {
     setMealDate(e.target.value)
   }
 

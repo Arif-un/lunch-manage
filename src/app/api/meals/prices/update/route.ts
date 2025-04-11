@@ -70,6 +70,7 @@ async function updateMealsPrices(newPrice: number, loginUserId: number, date: st
     .where(and(eq(sql`date(${Meals.created_at})`, sql`date(${date})`), gt(Meals.amount, 0)))
     .returning()
 
+
   if (!updatedMealRows.length)
     return { success: false, message: 'can not update meals price while price update' }
 

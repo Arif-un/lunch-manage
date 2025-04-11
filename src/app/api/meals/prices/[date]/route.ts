@@ -1,12 +1,22 @@
 import { getMealPrice } from '../../[userId]/route'
 
-export async function POST(_, props: { params: Promise<{ date: string }> }) {
-  const params = await props.params;
+interface RequestParams {
+  date: string;
+}
 
+interface PriceResponse {
+  price: number;
+  success: boolean;
+}
+
+export async function POST(
+  _: Request,
+  props: { params: RequestParams }
+): Promise<Response> {
   const {
     date
-  } = params;
+  } = props.params;
 
-  const price = await getMealPrice(date)
-  return Response.json({ price, success: true })
+  const price = await getMealPrice(date);
+  return Response.json({ price, success: true } as PriceResponse);
 }

@@ -36,24 +36,43 @@ const formValidation = z.object({
   created_at: z.any()
 })
 
-export default async function CreatePaymentModal(
-  props: {
-    searchParams: Promise<{ [key: string]: string }>
-  }
-) {
-  const searchParams = await props.searchParams;
+export default async function CreatePaymentModal(props: {
+  searchParams: Promise<{ [key: string]: string }>
+}) {
+  const searchParams = await props.searchParams
   const { id: loginUserId } = (await getSession()) || {}
+
+  // Redirect if user is not logged in
+  if (!loginUserId) {
+    redirect('/login?error=auth')
+  }
+
   const users = await fetchUsers()
   const headersList = await headers()
   const pathName = headersList.get('x-current-path') || ''
   console.log({ pathName })
+
   const handleSubmit = async (formData: FormData) => {
     'use server'
 
+    const paidBy = Number(formData.get('paid-by'))
+    const paidTo = Number(formData.get('paid-to'))
+
+    // Validate that the users exist in the database
+    const userExists =
+      users.some(user => user.id === paidBy) &&
+      users.some(user => user.id === paidTo) &&
+      users.some(user => user.id === Number(loginUserId))
+
+    if (!userExists) {
+      console.error('One or more user IDs do not exist')
+      redirect('/payments/create?error=invalid_user')
+    }
+
     const validation = formValidation.safeParse({
       amount: Number(formData.get('amount')),
-      paid_by: Number(formData.get('paid-by')),
-      paid_to: Number(formData.get('paid-to')),
+      paid_by: paidBy,
+      paid_to: paidTo,
       note: formData.get('note') as string,
       updated_by: Number(loginUserId),
       created_by: Number(loginUserId),
@@ -65,21 +84,27 @@ export default async function CreatePaymentModal(
       redirect('/payments/create?error=validation')
     }
 
-    const [{ insertedId: paymentId }] = await db
-      .insert(Payments)
-      .values(validation.data)
-      .returning({ insertedId: Payments.id })
+    try {
+      const [{ insertedId: paymentId }] = await db
+        .insert(Payments)
+        .values(validation.data)
+        .returning({ insertedId: Payments.id })
 
-    db.insert(paymentsLog)
-      .values({
-        ...validation.data,
-        type: 'create',
-        payment_id: paymentId
-      })
-      .run()
+      await db
+        .insert(paymentsLog)
+        .values({
+          ...validation.data,
+          type: 'create',
+          payment_id: paymentId
+        })
+        .run()
 
-    revalidatePath('/payments', 'page')
-    permanentRedirect('/payments')
+      revalidatePath('/payments', 'page')
+      permanentRedirect('/payments')
+    } catch (error) {
+      console.error('Database error:', error)
+      redirect('/payments/create?error=database')
+    }
   }
 
   return (
@@ -144,9 +169,27 @@ export default async function CreatePaymentModal(
             </div>
           </div>
 
-          {searchParams?.error && (
+          {searchParams?.error === 'validation' && (
             <div className="mb-2 ml-24 w-64 rounded-md bg-red-100 p-2 text-red-950">
-              Validation error
+              Please fill out all required fields correctly.
+            </div>
+          )}
+
+          {searchParams?.error === 'invalid_user' && (
+            <div className="mb-2 ml-24 w-64 rounded-md bg-red-100 p-2 text-red-950">
+              One or more users do not exist in the system.
+            </div>
+          )}
+
+          {searchParams?.error === 'database' && (
+            <div className="mb-2 ml-24 w-64 rounded-md bg-red-100 p-2 text-red-950">
+              Database error occurred. Please try again.
+            </div>
+          )}
+
+          {searchParams?.error === 'auth' && (
+            <div className="mb-2 ml-24 w-64 rounded-md bg-red-100 p-2 text-red-950">
+              You must be logged in to perform this action.
             </div>
           )}
 

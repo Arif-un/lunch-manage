@@ -154,5 +154,5 @@ export async function getMealPrice(date: string) {
     .from(MealPrices)
     .where(eq(MealPrices.is_default, 1))
 
-  return defaultPrice.price
+  return defaultPrice?.price || 90
 }
