@@ -43,7 +43,7 @@ export default function DeleteUserButton({ userId, userName }: DeleteUserButtonP
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" size="sm" className="text-xs p-2 h-7 text-red-500">
+        <Button variant="outline" size="sm" className="h-7 px-2 text-xs text-red-500">
           <TrashIcon/>
         </Button>
       </DialogTrigger>

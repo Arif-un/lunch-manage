@@ -1,3 +1,4 @@
+import { Pencil1Icon } from '@radix-ui/react-icons'
 import Link from 'next/link'
 
 import { fetchUsers } from '../server/usersActions'
@@ -42,10 +43,13 @@ export default async function UsersList() {
             <div className="flex items-center space-x-2">
               <Button
                 asChild
+                variant="outline"
                 size="sm"
-                className="h-6 bg-white px-2 py-0 text-xs text-slate-800 hover:bg-slate-50 hover:text-slate-950"
+                className="h-7 px-2 text-xs text-slate-800 hover:bg-slate-50 hover:text-slate-950"
               >
-                <Link href={`/users/edit/${user.id}`}>Edit</Link>
+                <Link href={`/users/edit/${user.id}`}>
+                  <Pencil1Icon />
+                </Link>
               </Button>
               <DeleteUserButton userId={user.id} userName={user.name} />
             </div>
