@@ -19,7 +19,7 @@ export async function POST(request: NextRequest) {
     return Response.json({ success: false, message: 'Invalid Date or LoggedIn user ID' })
   }
 
-  if (!isCustomPrice) {
+  if (isCustomPrice) {
     const priceUpdateResult = await createCustomPrice({
       newPrice,
       loginUserId,
