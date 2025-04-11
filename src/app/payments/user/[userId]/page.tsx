@@ -68,13 +68,19 @@ async function fetchPaymentsByUser(userId: number, page: number, itemsPerPage: n
   return { payments, totalCount, totalAmount }
 }
 
-export default async function PaymentsOfUserPage({
-  params: { userId },
-  searchParams
-}: {
-  params: { userId: string }
-  searchParams: { page?: string; item?: string }
-}) {
+export default async function PaymentsOfUserPage(
+  props: {
+    params: Promise<{ userId: string }>
+    searchParams: Promise<{ page?: string; item?: string }>
+  }
+) {
+  const searchParams = await props.searchParams;
+  const params = await props.params;
+
+  const {
+    userId
+  } = params;
+
   const pageNum = Number(searchParams.page) || 1
   const itemsPerPage = Number(searchParams.item) || DEFAULT_ITEMS_PER_PAGE
 
@@ -109,7 +115,6 @@ export default async function PaymentsOfUserPage({
             <div className="flex gap-1">
               <h3 className="text-slate-500">Total Amount Paid:</h3> ৳ {totalAmount}
             </div>
-3
             <ItemPerPage />
           </div>
 

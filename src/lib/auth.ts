@@ -58,7 +58,7 @@ export async function login(email: string, password: string): Promise<boolean> {
   // For this example, we'll just check if the email includes '@' and the password is longer than 3 characters
   if (email.includes('@') && password.length > 3) {
     const token = await encrypt({ email, id: 0 })
-    cookies().set('token', token, { httpOnly: true })
+    (await cookies()).set('token', token, { httpOnly: true })
     return true
   }
   return false
@@ -69,7 +69,7 @@ export async function login(email: string, password: string): Promise<boolean> {
  * @returns {Promise<void>}
  */
 export async function logout(): Promise<void> {
-  cookies().set('token', '', { expires: new Date(0) })
+  (await cookies()).set('token', '', { expires: new Date(0) })
 }
 
 /**
@@ -77,7 +77,7 @@ export async function logout(): Promise<void> {
  * @returns {Promise<object | null>} A promise that resolves to the session payload if a valid token exists, null otherwise.
  */
 export async function getSession(): Promise<Token | null> {
-  const token = cookies().get('token')?.value
+  const token = (await cookies()).get('token')?.value
   if (token) {
     try {
       const payload = await decrypt(token)

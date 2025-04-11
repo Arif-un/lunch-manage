@@ -53,7 +53,7 @@ export function Pagination({ currentPage, totalPages, itemsPerPage, baseUrl }: P
   }
 
   return (
-    <div className="mt-4 flex justify-center space-x-2">
+    <div className="mt-4 flex items-center justify-center space-x-2">
       <Button
         asChild
         variant="outline"

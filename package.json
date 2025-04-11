@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev --turbopack",
     "build": "NODE_ENV=production next build",
     "start": "next start",
     "lint": "next lint --fix",
@@ -28,9 +28,9 @@
     "jose": "^5.6.3",
     "jotai": "^2.9.0",
     "jsonwebtoken": "^9.0.2",
-    "next": "14.2.5",
-    "react": "^18",
-    "react-dom": "^18",
+    "next": "15.3.0",
+    "react": "19.1.0",
+    "react-dom": "19.1.0",
     "swr": "^2.2.5",
     "tailwind-merge": "^2.4.0",
     "tailwindcss-animate": "^1.0.7",
@@ -44,14 +44,14 @@
     "@types/bcryptjs": "^2.4.6",
     "@types/better-sqlite3": "^7.6.11",
     "@types/node": "^20",
-    "@types/react": "^18",
-    "@types/react-dom": "^18",
+    "@types/react": "19.1.0",
+    "@types/react-dom": "19.1.2",
     "drizzle-kit": "^0.23.0",
     "eslint": "^8.57.0",
     "eslint-config-airbnb": "^19.0.4",
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-config-airbnb-typescript": "^18.0.0",
-    "eslint-config-next": "^14.2.4",
+    "eslint-config-next": "15.3.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-config-react-app": "^7.0.1",
     "eslint-import-resolver-node": "^0.3.9",
@@ -84,5 +84,11 @@
     "tsx": "^4.16.2",
     "typescript": "^5.2"
   },
-  "packageManager": "pnpm@9.4.0+sha512.f549b8a52c9d2b8536762f99c0722205efc5af913e77835dbccc3b0b0b2ca9e7dc8022b78062c17291c48e88749c70ce88eb5a74f1fa8c4bf5e18bb46c8bd83a"
+  "packageManager": "pnpm@9.4.0+sha512.f549b8a52c9d2b8536762f99c0722205efc5af913e77835dbccc3b0b0b2ca9e7dc8022b78062c17291c48e88749c70ce88eb5a74f1fa8c4bf5e18bb46c8bd83a",
+  "pnpm": {
+    "overrides": {
+      "@types/react": "19.1.0",
+      "@types/react-dom": "19.1.2"
+    }
+  }
 }

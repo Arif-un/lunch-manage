@@ -36,14 +36,15 @@ const formValidation = z.object({
   created_at: z.any()
 })
 
-export default async function CreatePaymentModal({
-  searchParams
-}: {
-  searchParams: { [key: string]: string }
-}) {
+export default async function CreatePaymentModal(
+  props: {
+    searchParams: Promise<{ [key: string]: string }>
+  }
+) {
+  const searchParams = await props.searchParams;
   const { id: loginUserId } = (await getSession()) || {}
   const users = await fetchUsers()
-  const headersList = headers()
+  const headersList = await headers()
   const pathName = headersList.get('x-current-path') || ''
   console.log({ pathName })
   const handleSubmit = async (formData: FormData) => {

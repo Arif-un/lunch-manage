@@ -9,11 +9,17 @@ import { Button } from '../components/ui/button'
 import { dateToday } from '../lib/utils'
 import { fetchUsersWithMeals } from '../server/usersActions'
 
-export default async function Home({
-  searchParams: { date = dateToday() }
-}: {
-  searchParams: { date: string }
-}) {
+export default async function Home(
+  props: {
+    searchParams: Promise<{ date: string }>
+  }
+) {
+  const searchParams = await props.searchParams;
+
+  const {
+    date = dateToday()
+  } = searchParams;
+
   const usersWithMeals = await fetchUsersWithMeals(date)
 
   const quantity =

@@ -46,15 +46,16 @@ async function fetchPaymentById(id: string) {
   return res?.[0]
 }
 
-export default async function EditPaymentModal({
-  params,
-  searchParams
-}: {
-  params: { paymentId: string }
-  searchParams: { [key: string]: string }
-}) {
+export default async function EditPaymentModal(
+  props: {
+    params: Promise<{ paymentId: string }>
+    searchParams: Promise<{ [key: string]: string }>
+  }
+) {
+  const searchParams = await props.searchParams;
+  const params = await props.params;
   const { paymentId } = params
-  const headersList = headers()
+  const headersList = await headers()
   const pathName = headersList.get('x-current-path') || ''
   const [paymentEditData, users, sessions] = await Promise.all([
     fetchPaymentById(paymentId),
