@@ -22,8 +22,8 @@ import {
 import { Textarea } from '@/src/components/ui/textarea'
 import { getSession } from '@/src/lib/auth'
 import db from '@/src/lib/db/connection'
+import { afterPaymentInsert } from '@/src/lib/db/hooks/paymentHooks'
 import Payments from '@/src/lib/db/schema/Payments'
-import paymentsLog from '@/src/lib/db/schema/PaymentsLog'
 import { fetchUsers } from '@/src/server/usersActions'
 
 const formValidation = z.object({
@@ -62,7 +62,7 @@ async function handleSubmit(formData: FormData) {
     redirect('/payments/create?error=invalid_user')
   }
 
-  const validation = formValidation.safeParse({
+  const validatedData = {
     amount: Number(formData.get('amount')),
     paid_by: paidBy,
     paid_to: paidTo,
@@ -70,7 +70,9 @@ async function handleSubmit(formData: FormData) {
     updated_by: Number(loginUserId),
     created_by: Number(loginUserId),
     created_at: sql`(DATETIME('now', 'localtime'))`
-  })
+  }
+
+  const validation = formValidation.safeParse(validatedData)
 
   if (!validation.success) {
     console.error(validation.error)
@@ -83,13 +85,10 @@ async function handleSubmit(formData: FormData) {
     .returning({ insertedId: Payments.id })
 
   try {
-    await db.insert(paymentsLog).values({
-      ...validation.data,
-      type: 'create',
-      payment_id: paymentId
-    })
+    // Use the hook to log the payment creation
+    await afterPaymentInsert(paymentId, validation.data)
   } catch (error) {
-    console.error('Error inserting into PaymentsLog:', error)
+    console.error('Error logging payment creation:', error)
   }
 
   revalidatePath('/payments', 'page')

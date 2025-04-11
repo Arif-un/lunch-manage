@@ -24,8 +24,8 @@ import {
 import { Textarea } from '@/src/components/ui/textarea'
 import { getSession } from '@/src/lib/auth'
 import db from '@/src/lib/db/connection'
+import { afterPaymentUpdate } from '@/src/lib/db/hooks/paymentHooks'
 import payments from '@/src/lib/db/schema/Payments'
-import PaymentsLog from '@/src/lib/db/schema/PaymentsLog'
 import { fetchUsers } from '@/src/server/usersActions'
 
 const formValidation = z.object({
@@ -76,12 +76,15 @@ async function handleSubmit(formData: FormData) {
     })
     .where(eq(payments.id, Number(paymentId)))
 
-  await db.insert(PaymentsLog).values({
-    ...validation.data,
-    type: 'edit',
-    created_by: Number(loginUserId),
-    payment_id: Number(paymentId)
-  })
+  try {
+    // Use the hook to log the payment update
+    await afterPaymentUpdate(Number(paymentId), {
+      ...validation.data,
+      created_by: Number(loginUserId) // Supply created_by for the log
+    })
+  } catch (error) {
+    console.error('Error logging payment update:', error)
+  }
 
   revalidatePath('/payments')
   permanentRedirect('/payments')
