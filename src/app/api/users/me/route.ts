@@ -10,7 +10,7 @@ export async function GET(request: NextRequest) {
   try {
     // Get the current user's session
     const session = await getSession()
-    
+
     if (!session || !session.id) {
       return NextResponse.json(
         { error: 'Authentication required' },

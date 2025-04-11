@@ -19,17 +19,18 @@ interface User {
 }
 
 // Fetcher function for SWR
-const fetcher = (url: string) => fetch(url).then(res => {
-  if (res.ok) return res.json()
-  return null
-})
+const fetcher = (url: string) =>
+  fetch(url).then(res => {
+    if (res.ok) return res.json()
+    return null
+  })
 
 export default function Sidebar() {
   const [{ isOpenSidebar }, setUserPref] = useAtom(userPreferenceAtom)
   const pathName = usePathname()
   const date = dateToday()
   const router = useRouter()
-  
+
   // Use SWR to fetch user data with automatic revalidation
   const { data } = useSWR('/api/users/me', fetcher, {
     revalidateOnFocus: false,
@@ -81,9 +82,9 @@ export default function Sidebar() {
           <PersonIcon className="mr-2 h-4 w-4" />
           {firstName}
         </Button>
-        
+
         <div className="my-2 border-t border-slate-700"></div>
-        
+
         <Button
           variant="link"
           onClick={handleRoutes(`/?date=${date}`)}

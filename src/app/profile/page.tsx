@@ -21,21 +21,22 @@ interface User {
 }
 
 // Fetcher function for SWR
-const fetcher = (url: string) => fetch(url).then(res => {
-  if (!res.ok) {
-    if (res.status === 401) {
-      // Redirect to login if unauthorized
-      window.location.href = '/login'
-      return null
+const fetcher = (url: string) =>
+  fetch(url).then(res => {
+    if (!res.ok) {
+      if (res.status === 401) {
+        // Redirect to login if unauthorized
+        window.location.href = '/login'
+        return null
+      }
+      throw new Error('Failed to fetch profile data')
     }
-    throw new Error('Failed to fetch profile data')
-  }
-  return res.json()
-})
+    return res.json()
+  })
 
 export default function ProfilePage() {
   const router = useRouter()
-  
+
   // Use SWR to fetch user data with automatic revalidation
   const { data, error, isLoading } = useSWR('/api/users/me', fetcher, {
     revalidateOnFocus: true,
@@ -92,7 +93,9 @@ export default function ProfilePage() {
                     <div className="space-y-1">
                       <Label className="text-sm text-slate-500">Status</Label>
                       <p className="text-lg">
-                        <span className={`capitalize ${user?.status === 'active' ? 'text-green-600' : 'text-red-600'}`}>
+                        <span
+                          className={`capitalize ${user?.status === 'active' ? 'text-green-600' : 'text-red-600'}`}
+                        >
                           {user?.status || 'Active'}
                         </span>
                       </p>

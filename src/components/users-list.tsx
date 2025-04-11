@@ -2,6 +2,7 @@ import { Pencil1Icon, PersonIcon } from '@radix-ui/react-icons'
 import Link from 'next/link'
 
 import { getSession } from '@/src/lib/auth'
+
 import { fetchUsers } from '../server/usersActions'
 import DeleteUserButton from './delete-user-button'
 import { Button } from './ui/button'
