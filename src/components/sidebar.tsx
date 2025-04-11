@@ -2,20 +2,42 @@
 
 import { useEffect } from 'react'
 
-import { ChevronLeftIcon } from '@radix-ui/react-icons'
+import { ChevronLeftIcon, PersonIcon } from '@radix-ui/react-icons'
 import { useAtom } from 'jotai'
 import { usePathname, useRouter } from 'next/navigation'
+import useSWR from 'swr'
 
 import userPreferenceAtom from '../global-states/user-preference-atom'
 import { cn, dateToday } from '../lib/utils'
 import { logoutAction } from '../server/authAction'
 import { Button } from './ui/button'
 
+interface User {
+  id: number
+  name: string
+  email: string
+}
+
+// Fetcher function for SWR
+const fetcher = (url: string) => fetch(url).then(res => {
+  if (res.ok) return res.json()
+  return null
+})
+
 export default function Sidebar() {
   const [{ isOpenSidebar }, setUserPref] = useAtom(userPreferenceAtom)
   const pathName = usePathname()
   const date = dateToday()
   const router = useRouter()
+  
+  // Use SWR to fetch user data with automatic revalidation
+  const { data } = useSWR('/api/users/me', fetcher, {
+    revalidateOnFocus: false,
+    revalidateIfStale: true
+  })
+
+  // Extract user data from response
+  const user: User | null = data?.user ?? null
 
   useEffect(() => {
     navigator.vibrate([1])
@@ -27,6 +49,9 @@ export default function Sidebar() {
     }, 300)
     setUserPref(prv => ({ ...prv, isOpenSidebar: false }))
   }
+
+  // Extract first name from the full name
+  const firstName = user?.name ? user.name.split(' ')[0] : 'Profile'
 
   return (
     <nav className={`fixed ${cn(isOpenSidebar ? 'sidebar h-full w-48' : 'size-0 overflow-hidden')}`}>
@@ -44,6 +69,21 @@ export default function Sidebar() {
       </div>
 
       <div className="mx-8 mt-6 flex flex-col gap-3 px-5 ">
+        {/* Profile link with user's first name */}
+        <Button
+          variant="link"
+          onClick={handleRoutes(`/profile`)}
+          className={cn([
+            pathName === '/profile' ? 'text-white font-semibold' : 'text-slate-400 font-light',
+            'p-0 justify-start flex items-center'
+          ])}
+        >
+          <PersonIcon className="mr-2 h-4 w-4" />
+          {firstName}
+        </Button>
+        
+        <div className="my-2 border-t border-slate-700"></div>
+        
         <Button
           variant="link"
           onClick={handleRoutes(`/?date=${date}`)}
