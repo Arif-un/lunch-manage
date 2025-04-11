@@ -75,3 +75,26 @@ export async function createUser(name: string, email: string, password: string) 
     throw err
   }
 }
+
+/**
+ * Deletes a user from the database
+ * @param userId The ID of the user to delete
+ * @returns True if deletion was successful
+ */
+export async function deleteUser(userId: number) {
+  try {
+    // Delete the user
+    const result = await db.delete(Users)
+      .where(eq(Users.id, userId))
+      .returning({ id: Users.id })
+
+    if (!result.length) {
+      throw new Error('Failed to delete user')
+    }
+
+    return true
+  } catch (err) {
+    console.error('Error deleting user:', err)
+    throw err
+  }
+}
