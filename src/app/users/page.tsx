@@ -1,5 +1,8 @@
+import Link from 'next/link'
+
 import ContentWrapper from '@/src/components/content-wrapper'
 import NavButton from '@/src/components/nav-button'
+import { Button } from '@/src/components/ui/button'
 import UsersList from '@/src/components/users-list'
 
 export default async function Users() {
@@ -7,9 +10,14 @@ export default async function Users() {
     <ContentWrapper>
       <main className="flex min-h-screen flex-col items-center bg-slate-50">
         <div className="w-10/12 md:w-3/6 ">
-          <div className="my-3 flex items-center gap-3">
-            <NavButton />
-            <h2 className="font-semibold">Users</h2>
+          <div className="my-3 flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <NavButton />
+              <h2 className="font-semibold">Users</h2>
+            </div>
+            <Button asChild size="sm">
+              <Link href="/users/create">Create User</Link>
+            </Button>
           </div>
           <UsersList />
         </div>

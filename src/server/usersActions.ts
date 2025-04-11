@@ -37,15 +37,41 @@ export async function fetchUsers() {
 }
 
 /**
- *
- * @param name
- * @param email
- * @param password
+ * Creates a new user in the database
+ * @param name The user's full name
+ * @param email The user's email address (must be unique)
+ * @param password The user's password
+ * @returns The created user or throws an error
  */
 export async function createUser(name: string, email: string, password: string) {
   try {
-    db.insert(Users).values({ name, email, password }).run()
+    // Check if email already exists
+    const existingUser = await db
+      .select()
+      .from(Users)
+      .where(eq(Users.email, email))
+      .limit(1)
+
+    if (existingUser.length > 0) {
+      throw new Error('Email already exists')
+    }
+
+    // Create the new user
+    const result = await db.insert(Users).values({
+      name,
+      email,
+      password, // In a production app, the password should be hashed
+      created_at: sql`(DATETIME('now', 'localtime'))`,
+      updated_at: sql`(DATETIME('now', 'localtime'))`
+    }).returning({ id: Users.id })
+
+    if (!result.length) {
+      throw new Error('Failed to create user')
+    }
+
+    return result[0]
   } catch (err) {
-    if (err instanceof Error) console.error(err.stack)
+    console.error('Error creating user:', err)
+    throw err
   }
 }
