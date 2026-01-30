@@ -51,7 +51,7 @@
     "@types/react": "19.1.0",
     "@types/react-dom": "19.1.2",
     "drizzle-kit": "^0.30.6",
-    "eslint": "^8.57.0",
+    "eslint": "^9.26.0",
     "eslint-config-airbnb": "^19.0.4",
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-config-airbnb-typescript": "^18.0.0",
